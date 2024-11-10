@@ -1,1 +1,1 @@
-# Music-player
+A simple web-based music player built using HTML, CSS, and JavaScript. The project features audio controls (play, pause, volume), dynamic song information, and a visually appealing layout. HTML defines the structure, CSS styles the page, and JavaScript adds interactivity and audio playback functionality, making it a fully interactive user experience.                          # Music-player
