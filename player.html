@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <style>
+        /* styles.css */
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .player {
+            background-color: #222;
+            color: #fff;
+            border-radius: 10px;
+            width: 350px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .track-info {
+            margin-bottom: 20px;
+        }
+
+        #track-name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #artist-name {
+            font-size: 16px;
+        }
+
+        .controls button {
+            background-color: #444;
+            border: none;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .controls button:hover {
+            background-color: #666;
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        #progress {
+            width: 80%;
+            cursor: pointer;
+        }
+
+        .time-display {
+            margin-left: 10px;
+        }
+
+        .volume-control {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        #volume {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="player">
+        <div class="track-info">
+            <span id="track-name">Track Name</span>
+            <span id="artist-name">Artist Name</span>
+        </div>
+        <audio id="audio-player" preload="auto">
+            <source src="path/to/your/song.mp3" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+        
+        <div class="controls">
+            <button id="prev-btn">Prev</button>
+            <button id="play-btn">Play</button>
+            <button id="next-btn">Next</button>
+        </div>
+        
+        <div class="progress-bar">
+            <input id="progress" type="range" value="0" max="100">
+            <span id="time-display">0:00</span>
+        </div>
+        
+        <div class="volume-control">
+            <label for="volume">Volume:</label>
+            <input id="volume" type="range" min="0" max="100" value="100">
+        </div>
+    </div>
+
+    <script>
+        // app.js
+
+        // Get HTML elements
+        const audioPlayer = document.getElementById("audio-player");
+        const playButton = document.getElementById("play-btn");
+        const prevButton = document.getElementById("prev-btn");
+        const nextButton = document.getElementById("next-btn");
+        const progressBar = document.getElementById("progress");
+        const volumeControl = document.getElementById("volume");
+        const timeDisplay = document.getElementById("time-display");
+        const trackName = document.getElementById("track-name");
+        const artistName = document.getElementById("artist-name");
+
+        // Song details (could be dynamic or come from a server)
+        const songs = [
+            { name: "Song 1", artist: "Artist 1", path: "path/to/song1.mp3" },
+            { name: "Song 2", artist: "Artist 2", path: "path/to/song2.mp3" },
+            { name: "Song 3", artist: "Artist 3", path: "path/to/song3.mp3" }
+        ];
+
+        let currentSongIndex = 0; // Index of the current song
+
+        // Load and update song info
+        function loadSong(song) {
+            audioPlayer.src = song.path;
+            trackName.textContent = song.name;
+            artistName.textContent = song.artist;
+            audioPlayer.load();
+        }
+
+        // Play/Pause functionality
+        function togglePlay() {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playButton.textContent = "Pause";
+            } else {
+                audioPlayer.pause();
+                playButton.textContent = "Play";
+            }
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            progressBar.value = progress;
+
+            // Format time
+            const currentMinutes = Math.floor(audioPlayer.currentTime / 60);
+            const currentSeconds = Math.floor(audioPlayer.currentTime % 60);
+            timeDisplay.textContent = `${currentMinutes}:${currentSeconds < 10 ? '0' + currentSeconds : currentSeconds}`;
+        }
+
+        // Change progress bar manually
+        progressBar.addEventListener("input", (e) => {
+            const newTime = (e.target.value / 100) * audioPlayer.duration;
+            audioPlayer.currentTime = newTime;
+        });
+
+        // Volume control
+        volumeControl.addEventListener("input", (e) => {
+            audioPlayer.volume = e.target.value / 100;
+        });
+
+        // Next/Previous song functionality
+        function playNext() {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            loadSong(songs[currentSongIndex]);
+            audioPlayer.play();
+        }
+
+        function playPrev() {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            loadSong(songs[currentSongIndex]);
+            audioPlayer.play();
+        }
+
+        // Event listeners
+        playButton.addEventListener("click", togglePlay);
+        nextButton.addEventListener("click", playNext);
+        prevButton.addEventListener("click", playPrev);
+
+        // Initialize player with the first song
+        loadSong(songs[currentSongIndex]);
+
+        // Update progress bar while playing
+        audioPlayer.addEventListener("timeupdate", updateProgress);
+    </script>
+</body>
+</html>
